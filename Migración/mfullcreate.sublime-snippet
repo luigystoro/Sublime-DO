@@ -1,0 +1,89 @@
+<snippet>
+	<content><![CDATA[
+//Tabla: $1 //Columna Nueva: $2 // Columna Antigua: $3 
+//Schema : ${4:COMPIERE}
+
+//ALTER 
+SELECT   'ALTER TABLE '  || '$4.$1' || '   ADD COLUMN '  || '$2' || '  ' ||
+CASE s.DATA_TYPE
+WHEN 'BINARY LARGE OBJECT' THEN 'BLOB '
+WHEN 'DOUBLE PRECISION' THEN 'DOUBLE' -- || ( s.NUMERIC_PRECISION + 1) || + ' , ' ||  s.NUMERIC_SCALE ||')'
+--WHEN 'REAL'             THEN   'REAL('   || ( s.NUMERIC_PRECISION + 1) || + ' , ' ||  s.NUMERIC_SCALE ||')'
+WHEN 'BIGINT' THEN 'BIGINT '
+WHEN 'TIMESTAMP' THEN 'TIMESTAMP '
+WHEN 'CHARACTER' THEN   'CHAR(' || s.character_maximum_length || ') '
+WHEN 'CHARACTER VARYING' THEN   'VARCHAR(' || s.character_maximum_length || ')'
+WHEN 'CHARACTER LARGE OBJECT' THEN 'CLOB'
+WHEN 'DATE' THEN 'DATE'
+WHEN 'SMALLINT' THEN 'SMALLINT'
+--WHEN 'GRAPHIC VARYING' THEN   ' VARGRAPHIC(' || s.character_maximum_length || ')'
+WHEN 'DECIMAL' THEN   'DECIMAL(' ||  s.NUMERIC_PRECISION|| + ' , ' ||  s.NUMERIC_SCALE ||')'
+--WHEN 'NUMERIC' THEN   'NUMERIC(' ||  s.NUMERIC_PRECISION|| + ' , ' ||  s.NUMERIC_SCALE ||')'
+WHEN 'INTEGER' THEN 'INTEGER'
+WHEN 'TIME' THEN 'TIME'
+WHEN 'GRAPHIC' THEN    'GRAPHIC(' || s.character_maximum_length || ') '
+--WHEN 'DECFLOAT' THEN 'DECFLOAT'
+--WHEN 'LONG VARGRAPHIC' THEN 'LONG VARGRAPHIC'
+--WHEN 'USER-DEFINED' THEN 'USER-DEFINED'
+--WHEN 'XML' THEN 'XML'
+ELSE '*************'   -- Significa que el tipo de dato no se consider�
+END  ||
+' ' ||
+CASE s.IS_NULLABLE
+WHEN 'NO' THEN 'NOT NULL DEFAULT ' || COALESCE(s.COLUMN_DEFAULT, '????' ) -- El signo de interrogaci�n significa que no tiene valor por defecto
+ELSE  '  '
+END  ||
+';' AS QUERY_ALTER
+FROM sysibm.Columns s
+WHERE s.TABLE_SCHEMA='$4' AND  lcase(table_name) LIKE lcase('$1') AND lcase(column_name) LIKE lcase('$3');
+
+//UPDATE
+UPDATE $1 SET $2 = $3 WHERE $2 IS NULL;
+
+//TRIGGER
+--/
+CREATE TRIGGER $4.$1_$3_INSERT
+BEFORE INSERT ON $4.$1 
+REFERENCING new as new_row
+FOR EACH ROW 
+MODE DB2ROW 
+BEGIN
+IF (new_row.$2 IS NOT NULL) THEN
+   SET new_row.$3 = new_row.$2;
+ELSEIF (new_row.$3 IS NOT NULL) THEN
+   SET new_row.$2 = new_row.$3;
+END IF;
+END
+/
+--/
+CREATE TRIGGER $4.$1_$3_UPDATE 
+NO CASCADE
+BEFORE UPDATE OF $2 ON $4.$1 
+REFERENCING NEW AS new_row 
+FOR EACH ROW 
+MODE DB2ROW 
+BEGIN
+SET new_row.$3 = new_row.$2;
+END
+/
+--/
+CREATE TRIGGER $4.$1_$2_UPDATE
+    NO CASCADE
+    BEFORE UPDATE OF $3 ON $4.$1 
+    REFERENCING new as new_row
+    FOR EACH ROW 
+    MODE DB2ROW
+    BEGIN 
+    SET new_row.$2   = new_row.$3;
+END
+/
+ ]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>mfullcreate</tabTrigger>
+	     <scope>source.sql</scope>
+ 
+	     <description>Full Create ... Create and Update Column</description>
+
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

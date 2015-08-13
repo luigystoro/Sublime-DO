@@ -1,0 +1,35 @@
+<snippet>
+	<content><![CDATA[
+// ENTITYTYPE: $1 COLUMNNAME: $2  NAME $3 PrintName: ${4:$3} Description: ${5:$4} HELP: ${6:$5} Nombre: $7 NombreImpreso: ${8:$7} Descripción: ${9:$8} Ayuda: ${10:$9}
+
+//Schema : ${11:COMPIERE}
+SET SCHEMA $11;
+
+//System Element para $7
+ INSERT INTO AD_ELEMENT ( AD_CLIENT_ID,AD_ELEMENT_ID,AD_ORG_ID,
+ENTITYTYPE,COLUMNNAME,NAME,PRINTNAME, DESCRIPTION, HELP )
+
+ VALUES ( 0,
+        (SELECT S.CURRENTNEXT FROM AD_SEQUENCE S WHERE  UPPER( S.name )= 'AD_ELEMENT'  ) ,
+        0,
+		'$1',
+        '$2','$3','$4', '$5', '$6') ;
+
+INSERT INTO AD_ELEMENT_TRL ( AD_CLIENT_ID,AD_ELEMENT_ID,AD_LANGUAGE,AD_ORG_ID,name,PRINTNAME ,DESCRIPTION, HELP, ISTRANSLATED )
+ VALUES ( 0,
+         (SELECT S.CURRENTNEXT FROM AD_SEQUENCE S WHERE  UPPER( S.name )= 'AD_ELEMENT'  ) ,
+         'es_VE',
+         0,
+         '$7','$8', '$9', '$10',
+		 'Y');
+update AD_SEQUENCE S1 set S1.CURRENTNEXT= (SELECT s.CURRENTNEXT+S.INCREMENTNO FROM AD_SEQUENCE S WHERE  UPPER( S.name )= 'AD_ELEMENT' ) WHERE  UPPER( S1.name )= 'AD_ELEMENT';
+COMMIT;
+		 ]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>msystemelement</tabTrigger>
+
+	     <description>system element ... Create System Element</description>
+
+	<!-- Optional: Set a scope to limit WHERE the snippet will trigger -->
+	<scope>source.sql</scope>
+</snippet>

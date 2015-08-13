@@ -1,0 +1,43 @@
+<snippet>
+    <content><![CDATA[
+//Schema : ${1:COMPIERE} Tabla : $2 Columna : ${3:%}
+SELECT   s.table_name, s.column_name, 'ALTER TABLE '  || s.table_name || '   ADD COLUMN '  || s.column_name || '  ' ||
+CASE s.DATA_TYPE
+WHEN 'BINARY LARGE OBJECT' THEN 'BLOB '
+WHEN 'DOUBLE PRECISION' THEN 'DOUBLE' -- || ( s.NUMERIC_PRECISION + 1) || + ' , ' ||  s.NUMERIC_SCALE ||')'
+--WHEN 'REAL'             THEN   'REAL('   || ( s.NUMERIC_PRECISION + 1) || + ' , ' ||  s.NUMERIC_SCALE ||')'
+WHEN 'BIGINT' THEN 'BIGINT '
+WHEN 'TIMESTAMP' THEN 'TIMESTAMP '
+WHEN 'CHARACTER' THEN   'CHAR(' || s.character_maximum_length || ') '
+WHEN 'CHARACTER VARYING' THEN   'VARCHAR(' || s.character_maximum_length || ')'
+WHEN 'CHARACTER LARGE OBJECT' THEN 'CLOB'
+WHEN 'DATE' THEN 'DATE'
+WHEN 'SMALLINT' THEN 'SMALLINT'
+--WHEN 'GRAPHIC VARYING' THEN   ' VARGRAPHIC(' || s.character_maximum_length || ')'
+WHEN 'DECIMAL' THEN   'DECIMAL(' ||  s.NUMERIC_PRECISION|| + ' , ' ||  s.NUMERIC_SCALE ||')'
+--WHEN 'NUMERIC' THEN   'NUMERIC(' ||  s.NUMERIC_PRECISION|| + ' , ' ||  s.NUMERIC_SCALE ||')'
+WHEN 'INTEGER' THEN 'INTEGER'
+WHEN 'TIME' THEN 'TIME'
+WHEN 'GRAPHIC' THEN    'GRAPHIC(' || s.character_maximum_length || ') '
+--WHEN 'DECFLOAT' THEN 'DECFLOAT'
+--WHEN 'LONG VARGRAPHIC' THEN 'LONG VARGRAPHIC'
+--WHEN 'USER-DEFINED' THEN 'USER-DEFINED'
+--WHEN 'XML' THEN 'XML'
+ELSE '*************'   -- Significa que el tipo de dato no se consider�
+END  ||
+' ' ||
+CASE s.IS_NULLABLE
+WHEN 'NO' THEN 'NOT NULL DEFAULT ' || COALESCE(s.COLUMN_DEFAULT, '????' ) -- El signo de interrogaci�n significa que no tiene valor por defecto
+ELSE  '  '
+END  ||
+';' AS QUERY_ALTER,   s.DATA_TYPE  , s.NUMERIC_PRECISION, s.NUMERIC_SCALE, s.character_maximum_length,s.IS_NULLABLE,  s.COLUMN_DEFAULT
+FROM sysibm.Columns s
+WHERE s.TABLE_SCHEMA='$1' AND  lcase(table_name) LIKE lcase('$2') AND lcase(column_name) LIKE lcase('$3');]]></content>
+    <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+     <tabTrigger>maltert</tabTrigger>
+
+         <description>maltert ... Create Alter Table</description>
+
+    <!-- Optional: Set a scope to limit where the snippet will trigger -->
+    <scope>source.sql</scope>
+</snippet>

@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+//Tabla: $1 //Columna Nueva: $2 // Columna Antigua: $3 
+//Schema : ${4:COMPIERE}
+--/
+CREATE TRIGGER $4.$1_$3_INSERT
+BEFORE INSERT ON $4.$1 
+REFERENCING new as new_row
+FOR EACH ROW 
+MODE DB2ROW 
+BEGIN
+IF (new_row.$2 IS NOT NULL) THEN
+   SET new_row.$3 = new_row.$2;
+ELSEIF (new_row.$3 IS NOT NULL) THEN
+   SET new_row.$2 = new_row.$3;
+END IF;
+END
+/
+--/
+CREATE TRIGGER $4.$1_$3_UPDATE 
+NO CASCADE
+BEFORE UPDATE OF $2 ON $4.$1 
+REFERENCING NEW AS new_row 
+FOR EACH ROW 
+MODE DB2ROW 
+BEGIN
+SET new_row.$3 = new_row.$2;
+END
+/
+--/
+CREATE TRIGGER $4.$1_$2_UPDATE
+    NO CASCADE
+    BEFORE UPDATE OF $3 ON $4.$1 
+    REFERENCING new as new_row
+    FOR EACH ROW 
+    MODE DB2ROW
+    BEGIN 
+    SET new_row.$2   = new_row.$3;
+END
+/
+ ]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>mtriggers</tabTrigger>
+	     <scope>source.sql</scope>
+ 
+	     <description>triggers ... triggers migration</description>
+
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

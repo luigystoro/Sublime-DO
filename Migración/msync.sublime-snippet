@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+//Schema: ${1:COMPIERE}		
+//Tabla Origen: $2
+//Tabla Destino: $3
+SET SCHEMA $1;
+CREATE VIEW EXT_SYNC_$2_$3_V
+//ColumnaDestino
+ ($4) 
+AS SELECT 
+//ColumnaOrigen AS ColumnaDestino (B Inserta/Actualiza, U Actuliza, I Inserta, X Para Join o Filtros )
+$0
+FROM
+$2;
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>msyncv</tabTrigger>
+	     <scope>source.sql</scope>
+
+	     <description>Sync View ... Create View Sync</description>
+
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

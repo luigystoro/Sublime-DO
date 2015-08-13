@@ -1,0 +1,81 @@
+<snippet>
+	<content><![CDATA[
+
+//ENTITYTYPE: $1 NAME: $2 DESCRIPTION: $3 COMMENT: $4 VERSION: $5
+//SCHEMA: $6
+
+SET SCHEMA ${6:COMPIERE};
+
+
+INSERT
+INTO
+    AD_ENTITYTYPE
+    (
+        AD_CLIENT_ID,
+        AD_ENTITYTYPE_ID,
+        AD_ORG_ID,
+        BINARYDATA,
+        CLASSPATH,
+        CREATECOMPONENT,
+        CREATED,
+        CREATEDBY,
+        DESCRIPTION,
+        DOCUMENTATIONTEXT,
+        ENTITYTYPE,
+        HELP,
+        ISACTIVE,
+        ISREGISTERED,
+        LICENSETEXT,
+        MODELPACKAGE,
+        MODELVALIDATIONCLASSES,
+        NAME,
+        PROCESSING,
+        RECORD_ID,
+        RELATIVELOADNO,
+        REQUIRECOMPIEREVERSION,
+        REQUIRECOMPONENTVERSION,
+        SUMMARY,
+        UPDATED,
+        VERSION
+    )
+    VALUES
+    (
+        0,
+(SELECT S.CURRENTNEXT FROM AD_SEQUENCE S WHERE  UPPER( S.NAME )= UPPER('AD_EntityType' )  ),
+        0,
+        NULL,
+        NULL,
+        NULL,
+        CURRENT_TIMESTAMP, -- Creado
+        0,
+        '$3',-- Descripcion
+        NULL,
+        '$1',  -- Entity Type
+        '$4', --Comentario
+        'Y',
+        'N',
+        NULL,
+        NULL,
+        NULL,
+        '$2', -- Nombre
+        'N',
+        NULL,
+        400,
+        NULL,
+        NULL,
+        NULL,
+        CURRENT_TIMESTAMP, --Actualizado
+        '$5'
+    );
+
+/* Agregamos la siguiente secuencia  de AD_EntityType y grabamos */ 
+ update AD_SEQUENCE S1 set S1.CURRENTNEXT= (SELECT s.CURRENTNEXT+S.INCREMENTNO FROM AD_SEQUENCE S WHERE  UPPER( S.NAME )= UPPER( 'AD_EntityType') ) WHERE  UPPER( S1.NAME )= UPPER( 'AD_EntityType');COMMIT ;
+ ]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>mentity</tabTrigger>
+
+	     <description>mentity ... Create Entity Type</description>
+
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.sql</scope>
+</snippet>
