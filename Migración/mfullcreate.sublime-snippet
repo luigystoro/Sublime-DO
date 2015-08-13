@@ -38,7 +38,7 @@ FROM sysibm.Columns s
 WHERE s.TABLE_SCHEMA='$4' AND  lcase(table_name) LIKE lcase('$1') AND lcase(column_name) LIKE lcase('$3');
 
 //UPDATE
-UPDATE $1 SET $2 = $3 WHERE $2 IS NULL;
+UPDATE $1 SET $2 = $3;
 
 //TRIGGER
 --/
