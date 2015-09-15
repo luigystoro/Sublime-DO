@@ -1,0 +1,91 @@
+<snippet>
+	<content><![CDATA[
+//Esquema: $1, Entity Type: $2		
+set schema ${1:COMPIERE};
+select
+(
+CASE 
+WHEN (($1.is_agil(W.ENTITYTYPE)=1  or $1.is_agil(t.ENTITYTYPE)=1  or $1.is_agil(f.ENTITYTYPE)=1 or $1.is_agil(c.ENTITYTYPE)=1  or $1.is_agil(tb.ENTITYTYPE)=1  or $1.is_agil(r.ENTITYTYPE)=1  or $1.is_agil(vr.ENTITYTYPE)=1 or $1.is_agil(e.ENTITYTYPE)=1 )) THEN '1.- ENTITY_TYPE'
+WHEN (lcase(f.DISPLAYLOGIC) like lcase('%xx%')) THEN '2.- CAMPO'
+WHEN ((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( vr.AD_VAL_RULE_ID is  null))  THEN '3.- VALIDACION COLUMNA'
+WHEN ((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( lcase(vr.name) like '%xx%' or lcase(vr.code) like '%xx%')) THEN '4.- VALIDACION CAMPO'
+WHEN (lcase(c.MANDATORYLOGIC) like '%xx%' or lcase(c.READONLYLOGIC) like '%xx%' or lcase(c.DEFAULTVALUE) like '%xx%'  or lcase( c.COLUMNSQL ) like '%xx%' ) THEN '5.- COLUMNA'
+WHEN (lcase(c.CALLOUT) like lcase('%xx%') and f.CALLOUT IS NULL )  THEN '6.- Error_CALLOUT' // PUEDE haber variaciones
+WHEN (lcase(c.CALLOUT) is not null and f.CALLOUT IS NULL and trim(c.callout)<>'' )  THEN '7.- Warning_Callout' // PUEDE haber variaciones
+WHEN (lcase(fg.name) like ('xx')) THEN '8.- FIELDGROUP'
+ELSE '??' END 
+
+) AS CAUSA,
+u.name as creador,
+days(current timestamp)-days(f.created)
+ as c,
+days(current timestamp)-days(f.updated)
+
+ as u,
+w.NAME as NombreVentana, 
+t.NAME as NombrePestana,
+tb.AD_TABLE_ID as ID_Table,
+tb.TABLENAME as TABLENAME,
+f.NAME as NombreCampo,
+case f.ISDISPLAYED when 'N' then 'OCULTO' else ' ' end as OCULTO,
+f.DISPLAYLOGIC as DisplayLogic_field,
+fg.name as Name_FG,
+c.AD_COLUMN_ID as ID_COLUMNA,
+c.COLUMNNAME as NombreColumna,
+ref.NAME as REF_NAME,
+c.ISCALLOUT as IsCallout, 
+c.CALLOUT as Callout, 
+c.MANDATORYLOGIC as MANDATORYLOGIC, 
+c.DEFAULTVALUE as DEFAULTVALUE, 
+c.READONLYLOGIC as READONLYLOGIC,  
+c.COLUMNSQL as COLUMNSQL,
+vr.AD_VAL_RULE_ID as ID_val_field,  
+vr.name as Val_Din_field,
+vr.code as CODE_Val_Field,
+c.AD_VAL_RULE_ID    as ID_Val_col, 
+r.name as Val_Di_col,
+r.code as CODE_Val_col,
+e.AD_ELEMENT_ID as ID_ELEMENT,
+e.COLUMNNAME as Nombre_System_Element,
+w.ENTITYTYPE as ET_Win, 
+t.ENTITYTYPE as ENTITY_TAB, 
+f.ENTITYTYPE as ENTITY_FIELD, 
+c.ENTITYTYPE as ENTITY_COLUMN, 
+e.ENTITYTYPE as ENTITY_ELEMENT,
+tb.ENTITYTYPE as ENTITY_Table, 
+r.ENTITYTYPE as ENTITY_R_C, 
+vr.ENTITYTYPE as ENTITY_VR_F,
+fg.ENTITYTYPE as ENTITY_FG
+from AD_WINDOW w 
+left join AD_TAB t on t.AD_WINDOW_ID=w.AD_WINDOW_ID 
+left join ad_field f on f.AD_TAB_ID= t.AD_TAB_ID 
+left join AD_FIELDGROUP fg on fg.AD_FIELDGROUP_ID = f.AD_FIELDGROUP_ID
+left join ad_column c on f.AD_COLUMN_ID=c.AD_COLUMN_ID 
+left join ad_table tb on tb.ad_table_ID=c.ad_table_ID 
+left join AD_Val_Rule r on c.AD_VAL_RULE_ID=r.AD_VAL_RULE_ID
+left join AD_Val_Rule vr on f.AD_VAL_RULE_ID=vr.AD_VAL_RULE_ID
+join AD_ELEMENT e on c.AD_ELEMENT_ID= e.AD_ELEMENT_ID
+left join ad_reference ref on c.AD_REFERENCE_ID= ref.AD_REFERENCE_ID 
+left join ad_user u on u.AD_USER_ID = f.CREATEDBY
+where  
+(W.ENTITYTYPE= '$2' OR  t.ENTITYTYPE= '$2' OR  f.ENTITYTYPE= '$2'  ) and (
+( ($1.is_agil(W.ENTITYTYPE)=1  or $1.is_agil(t.ENTITYTYPE)=1  or $1.is_agil(f.ENTITYTYPE)=1 or $1.is_agil(c.ENTITYTYPE)=1  or $1.is_agil(tb.ENTITYTYPE)=1  or $1.is_agil(r.ENTITYTYPE)=1  or $1.is_agil(vr.ENTITYTYPE)=1 or $1.is_agil(e.ENTITYTYPE)=1 or $1.is_agil(fg.ENTITYTYPE)=1)) or
+((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( vr.AD_VAL_RULE_ID is  null or lcase(vr.name) like '%xx%' or lcase(vr.code) like '%xx%')) or 
+(lcase(c.MANDATORYLOGIC) like '%xx%' or lcase(c.READONLYLOGIC) like '%xx%' or lcase(c.DEFAULTVALUE) like '%xx%'  or lcase( c.COLUMNSQL ) like '%xx%' ) or 
+(c.CALLOUT IS NOT NULL and lcase(c.CALLOUT) like lcase('%xx%') and f.CALLOUT IS NULL and f.ISDISPLAYED='Y')  or  // PUEDEn haber variaciones
+lcase(f.DISPLAYLOGIC) like lcase('%xx%') or 
+(lcase(fg.name) like ('%xx%')) or 
+(lcase(c.CALLOUT) is not null and f.CALLOUT IS NULL and trim(c.callout)<>'' ) or 
+(lcase(e.COLUMNNAME)  not like lcase('ext%') and e.AD_ELEMENT_ID >999999)
+
+) order by causa;
+
+]]></content>
+    <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+     <tabTrigger>mreview</tabTrigger>
+
+         <description>mreview ... Migration Review</description>
+
+    <!-- Optional: Set a scope to limit where the snippet will trigger -->
+    <scope>source.sql</scope>
+</snippet>
