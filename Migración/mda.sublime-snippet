@@ -1,9 +1,8 @@
 <snippet>
 	<content><![CDATA[
 //Entity Type: $1
-//Schema : ${2:COMPIERE}
 
-SET SCHEMA $2;
+
 --------------------------------------------
 ---------------ENTITY TYPE------------------
 SELECT

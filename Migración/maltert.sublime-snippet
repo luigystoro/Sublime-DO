@@ -1,6 +1,6 @@
 <snippet>
     <content><![CDATA[
-//Schema : ${1:COMPIERE} Tabla : $2 Columna : ${3:%}
+//Tabla : $2 Columna : ${3:%}
 SELECT   s.table_name, s.column_name, 'ALTER TABLE '  || s.table_name || '   ADD COLUMN '  || s.column_name || '  ' ||
 CASE s.DATA_TYPE
 WHEN 'BINARY LARGE OBJECT' THEN 'BLOB '
@@ -32,7 +32,7 @@ ELSE  '  '
 END  ||
 ';' AS QUERY_ALTER,   s.DATA_TYPE  , s.NUMERIC_PRECISION, s.NUMERIC_SCALE, s.character_maximum_length,s.IS_NULLABLE,  s.COLUMN_DEFAULT
 FROM sysibm.Columns s
-WHERE s.TABLE_SCHEMA='$1' AND  lcase(table_name) LIKE lcase('$2') AND lcase(column_name) LIKE lcase('$3');]]></content>
+WHERE lcase(table_name) LIKE lcase('$2') AND lcase(column_name) LIKE lcase('$3');]]></content>
     <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
      <tabTrigger>maltert</tabTrigger>
 

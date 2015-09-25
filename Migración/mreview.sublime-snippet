@@ -1,11 +1,10 @@
 <snippet>
 	<content><![CDATA[
-//Esquema: $1, Entity Type: $2		
-set schema ${1:COMPIERE};
+//Entity Type: $2		
 select
 (
 CASE 
-WHEN (($1.is_agil(W.ENTITYTYPE)=1  or $1.is_agil(t.ENTITYTYPE)=1  or $1.is_agil(f.ENTITYTYPE)=1 or $1.is_agil(c.ENTITYTYPE)=1  or $1.is_agil(tb.ENTITYTYPE)=1  or $1.is_agil(r.ENTITYTYPE)=1  or $1.is_agil(vr.ENTITYTYPE)=1 or $1.is_agil(e.ENTITYTYPE)=1 )) THEN '1.- ENTITY_TYPE'
+WHEN (( is_agil(W.ENTITYTYPE)=1  or  is_agil(t.ENTITYTYPE)=1  or  is_agil(f.ENTITYTYPE)=1 or  is_agil(c.ENTITYTYPE)=1  or  is_agil(tb.ENTITYTYPE)=1  or  is_agil(r.ENTITYTYPE)=1  or  is_agil(vr.ENTITYTYPE)=1 or  is_agil(e.ENTITYTYPE)=1 )) THEN '1.- ENTITY_TYPE'
 WHEN (lcase(f.DISPLAYLOGIC) like lcase('%xx%')) THEN '2.- CAMPO'
 WHEN ((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( vr.AD_VAL_RULE_ID is  null))  THEN '3.- VALIDACION COLUMNA'
 WHEN ((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( lcase(vr.name) like '%xx%' or lcase(vr.code) like '%xx%')) THEN '4.- VALIDACION CAMPO'
@@ -69,7 +68,7 @@ left join ad_reference ref on c.AD_REFERENCE_ID= ref.AD_REFERENCE_ID
 left join ad_user u on u.AD_USER_ID = f.CREATEDBY
 where  
 (W.ENTITYTYPE= '$2' OR  t.ENTITYTYPE= '$2' OR  f.ENTITYTYPE= '$2'  ) and (
-( ($1.is_agil(W.ENTITYTYPE)=1  or $1.is_agil(t.ENTITYTYPE)=1  or $1.is_agil(f.ENTITYTYPE)=1 or $1.is_agil(c.ENTITYTYPE)=1  or $1.is_agil(tb.ENTITYTYPE)=1  or $1.is_agil(r.ENTITYTYPE)=1  or $1.is_agil(vr.ENTITYTYPE)=1 or $1.is_agil(e.ENTITYTYPE)=1 or $1.is_agil(fg.ENTITYTYPE)=1)) or
+( ( is_agil(W.ENTITYTYPE)=1  or  is_agil(t.ENTITYTYPE)=1  or  is_agil(f.ENTITYTYPE)=1 or  is_agil(c.ENTITYTYPE)=1  or  is_agil(tb.ENTITYTYPE)=1  or  is_agil(r.ENTITYTYPE)=1  or  is_agil(vr.ENTITYTYPE)=1 or  is_agil(e.ENTITYTYPE)=1 or  is_agil(fg.ENTITYTYPE)=1)) or
 ((lcase(r.name) like '%xx%' or lcase(r.code) like '%xx%' ) and  ( vr.AD_VAL_RULE_ID is  null or lcase(vr.name) like '%xx%' or lcase(vr.code) like '%xx%')) or 
 (lcase(c.MANDATORYLOGIC) like '%xx%' or lcase(c.READONLYLOGIC) like '%xx%' or lcase(c.DEFAULTVALUE) like '%xx%'  or lcase( c.COLUMNSQL ) like '%xx%' ) or 
 (c.CALLOUT IS NOT NULL and lcase(c.CALLOUT) like lcase('%xx%') and f.CALLOUT IS NULL and f.ISDISPLAYED='Y')  or  // PUEDEn haber variaciones

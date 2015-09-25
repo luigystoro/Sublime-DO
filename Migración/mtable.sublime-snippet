@@ -1,9 +1,7 @@
 <snippet>
 	<content><![CDATA[
 // ENTITYTYPE: $1 Nombre de la Tabla: $2 PK: $3 Name: $4  PrintName: $5 Nombre: $6 NombreImpreso: ${7:$6} Descripción: ${8:$7}
-//Schema : ${9:COMPIERECM}
 
-SET SCHEMA $9;
 //System Element para $8
  insert into AD_ELEMENT ( AD_CLIENT_ID,AD_ELEMENT_ID,AD_ORG_ID,
 ENTITYTYPE,COLUMNNAME,NAME,PRINTNAME )

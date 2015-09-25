@@ -1,9 +1,7 @@
 <snippet>
 	<content><![CDATA[
-//Schema: ${1:COMPIERE}		
 //Tabla Origen: $2
 //Tabla Destino: $3
-SET SCHEMA $1;
 CREATE VIEW EXT_SYNC_$2_$3_V
 //ColumnaDestino
  ($4) 

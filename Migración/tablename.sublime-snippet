@@ -1,7 +1,7 @@
 <snippet>
 	<content><![CDATA[
 
-// Esquema : $1 Nombre Corto Tabla: $2
+// Nombre Corto Tabla: $2
 
 SELECT b.system_table_name as ShortName,
       a.table_name, a.COLUMN_NAME, a.system_column_name, a.column_text, 
@@ -10,7 +10,7 @@ FROM sysibm.SQLColumns a
 INNER JOIN qsys2.systables b
 ON a.table_name = b.table_name
 AND a.table_schem = b.table_schema
-WHERE UPPER(a.table_schem) IN ('$1') and b.SYSTEM_TABLE_NAME = '$2'
+WHERE b.SYSTEM_TABLE_NAME = '$2'
 ORDER BY a.table_schem, a.table_Name, a.ordinal_position;
 							]]></content>
     <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
